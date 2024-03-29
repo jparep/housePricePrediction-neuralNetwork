@@ -19,6 +19,10 @@ from tensorflow.keras.layers import Input, Dense, GlobalMaxPooling1D, LeakyReLU
 from scikeras.wrappers import KerasRegressor
 from tensorflow.keras.callbacks import History
 
+# Set random seed for NumPy and TensorFlow
+np.random.seed(42)
+tf.random.set_seed(42)
+
 
 # Load Data Function
 def load_data(path) -> pd.DataFrame:
@@ -106,29 +110,15 @@ def evaluate_model(model, X_test, y_test):
     return mse, r2
 
 
-# Plot Training History
-def plot_training_history(history) -> None:
-    # Plot the training history
-    plt.figure(figsize=(12, 6))
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history["loss"], label="loss")
-    plt.plot(history.history["val_loss"], label="val_loss")
-    plt.title("Model Loss")
-    plt.xlabel("Epoch")
+# Plot Loss Entropy Function
+def plot_loss_entropy(history) -> None:
+    plt.figure(figsize=(10, 6))
+    plt.plot(history.history["loss"], label="Training Loss")
+    plt.plot(history.history["val_loss"], label="Validation Loss")
+    plt.title("Loss Entropy")
+    plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
-    plt.show()
-
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history["mean_squared_error"], label="mse")
-    plt.plot(history.history["val_loss"], label="val_loss")
-    plt.title("Modle MSE")
-    plt.xlabel("MSE")
-    plt.ylabel("Epoch")
-    plt.legend
-
-    # Layout show
-    plt.tight_layout()
     plt.show()
 
 
@@ -191,3 +181,10 @@ if __name__ == "__main__":
     print("\nEvaluation after hyperparameter tuning:")
     print(f"MSE: {mse_after}")
     print(f"R2: {r2_after}")
+
+    # Plot Loss Entropy
+    best_model.fit(
+        X_train, y_train, epochs=100, batch_size=32, validation_split=0.2, verbose=0
+    )
+    history = best_model.model.history
+    plot_loss_entropy(history)
